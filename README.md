@@ -64,13 +64,21 @@ valid JSON:       true
 
 Three cases:
 
-1. **default, type `{"b":2}`** — leaves `"}` behind; not valid JSON.
+1. **default, type `{"b":2}`** — stale text survives the edit; not valid JSON.
 2. **default, type `{` alone** — wraps the whole document: the model grows by one
    character and keeps its entire previous contents.
 3. **`autoSurround: 'never'`, type `{"b":2}`** — replaces correctly.
 
 Case 2 is the clearest statement of the bug: one keystroke should replace a
-selection, and instead it brackets it.
+selection, and instead it brackets it. It is deterministic.
+
+Case 1 is the same defect seen through a run of keystrokes, and **how much stale
+text survives varies between runs**: reproductions have produced both a short
+tail (`{"b":2}"}`) and the whole previous document
+(`{"b":2}[…original…]}`). The difference is where the following keystrokes land
+relative to the wrapped range, so treat the amount as timing-dependent and the
+"not replaced" verdict as the invariant. Case 3 has been deterministic in every
+run.
 
 The script exits non-zero while cases 1 and 2 fail; once the default is fixed it
 should exit zero. That makes it usable as a regression check.
@@ -84,8 +92,8 @@ should exit zero. That makes it usable as a regression check.
 
 ## Notes
 
-- Verified against `@pierre/diffs` **1.7.1** on Chromium (headless), macOS.
-  Two consecutive runs produced identical output.
+- Verified against `@pierre/diffs` **1.7.1** on Chromium (headless), macOS, from a
+  fresh clone of this repo.
 - `File` is the non-virtualized file surface: `rows rendered == document lines`
   here, so this is unrelated to virtualized surfaces.
 - The host app that surfaced this does pass `autoSurround: 'never'` as a
