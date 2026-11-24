@@ -1,0 +1,18 @@
+{
+  "name": "pierre-diffs-selectall-repro",
+  "private": true,
+  "type": "module",
+  "description": "Minimal repro: cmd/ctrl+A then typing keeps the previous document (@pierre/diffs)",
+  "scripts": {
+    "build": "vite build",
+    "start": "vite --host",
+    "repro": "node repro.mjs"
+  },
+  "dependencies": {
+    "@pierre/diffs": "1.7.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0",
+    "vite": "^6.4.1"
+  }
+}
